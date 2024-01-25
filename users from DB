@@ -1,0 +1,25 @@
+#So from a database to retrieve a user by building api using fast api
+from fastapi import FastAPI
+
+app = FastAPI()
+
+# Assume a database of users
+fake_users_db = {
+    1: {"username": "john_doe", "email": "john.doe@example.com"},
+    2: {"username": "alice_smith", "email": "alice.smith@example.com"},
+}
+
+@app.get("/users/{user_id}")
+def read_user(user_id: int):
+    user = fake_users_db.get(user_id)
+    if user:
+        return {"user_id": user_id, "username": user["username"], "email": user["email"]}
+    else:
+        return {"message": "User not found"}
+#------------------------------------------------------------------------------
+#output:http://127.0.0.1:8000/users/1
+  {
+    "user_id": 1,
+    "username": "john_doe",
+    "email": "john.doe@example.com"
+}
