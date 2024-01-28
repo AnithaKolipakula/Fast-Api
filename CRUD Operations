@@ -1,1 +1,44 @@
 #crud operations in fast api are Create,Read,Update,Delete
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List, Optional
+
+app = FastAPI()
+
+# In-memory database as a list
+fake_db = []
+
+# Model for the Item-Request Body-Pydnatic model
+class Item(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+# Create operation-An item is added in to the fake database
+@app.post("/items/")
+def create_item(item: Item):
+    fake_db.append(item)
+    return item
+
+# Read operation (Get all items)-For example, if skip is 0 and limit is 10, 
+                                  #it will return the first 10 items from the database
+@app.get("/items/",response_model=List[Item])
+def read_items(skip: int = 0, limit: int = 10):
+    return fake_db[skip :skip + limit]
+
+# Read operation (Get a single item by ID)
+@app.get("/items/{item_id}")
+def read_item(item_id: int):
+    return fake_db[item_id]
+
+# Update operation-changes an item of particular id
+@app.put("/items/{item_id}")
+def update_item(item_id: int, updated_item: Item):
+    fake_db[item_id] = updated_item
+    return updated_item
+
+# Delete operation-delete item of particular id
+@app.delete("/items/{item_id}")
+def delete_item(item_id: int):
+    deleted_item = fake_db.pop(item_id)
+    return deleted_item
+
